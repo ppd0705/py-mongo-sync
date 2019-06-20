@@ -24,7 +24,7 @@ class MongoHandler(object):
         """ Connect to server.
         """
         try:
-            if isinstance(self._conf.hosts):
+            if isinstance(self._conf.hosts, str):
                 host, port = mongo_utils.parse_hostportstr(self._conf.hosts)
                 self._mc = mongo_utils.connect(host, port,
                                                authdb=self._conf.authdb,
@@ -32,7 +32,7 @@ class MongoHandler(object):
                                                password=self._conf.password)
                 self._mc.admin.command('ismaster')
                 return True
-            elif isinstance(self._conf.__hosts, list):
+            elif isinstance(self._conf.hosts, list):
                 # TODO
                 return False
         except Exception as e:
