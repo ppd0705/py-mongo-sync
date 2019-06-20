@@ -112,15 +112,15 @@ class CheckCommandOptions(object):
             conf.dst_db = args['dst_db']
 
         if conf.dbs and (conf.src_db or conf.dst_db):
-            print "Terminated, conflict command options found"
+            print("Terminated, conflict command options found")
             sys.exit(1)
         if conf.src_db and not conf.dst_db:
-            print "Terminated, require command option '--dst-db'"
+            print("Terminated, require command option '--dst-db'")
             sys.exit(1)
         if conf.dst_db and not conf.src_db:
-            print "Terminated, require command option '--src-db'"
+            print("Terminated, require command option '--src-db'")
             sys.exit(1)
         if conf.src_db and conf.dst_db and conf.src_db == conf.dst_db:
-            print 'Terminated, src_db is same as dst_db'
+            print('Terminated, src_db is same as dst_db')
             sys.exit(1)
         return conf

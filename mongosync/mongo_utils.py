@@ -38,7 +38,7 @@ def get_version(arg):
     """
     if isinstance(arg, pymongo.MongoClient):
         return arg.server_info()['version']
-    elif isinstance(arg, str) or isinstance(arg, unicode):
+    elif isinstance(arg, str):
         host, port = parse_hostportstr(arg)
         with pymongo.MongoClient(host, port, connect=True, serverSelectionTimeoutMS=3000) as mc:
             return mc.server_info()['version']

@@ -2,6 +2,7 @@ import toml
 from bson.timestamp import Timestamp
 from mongosync.config import Config, MongoConfig, EsConfig
 from mongosync.mongo_utils import gen_namespace
+from mongosync.optime_logger import OptimeLogger
 
 
 class ConfigFile(object):
@@ -43,7 +44,7 @@ class ConfigFile(object):
 
                 if 'colls' in dbentry and dbentry['colls']:
                     for collentry in dbentry['colls']:
-                        if isinstance(collentry, str) or isinstance(collentry, unicode):
+                        if isinstance(collentry, str):
                             collname = collentry.strip()
                             ns = gen_namespace(dbname, collname)
                             conf.data_filter.add_include_coll(ns)
@@ -76,5 +77,11 @@ class ConfigFile(object):
 
         if 'log' in tml and 'filepath' in tml['log']:
             conf.logfilepath = tml['log']['filepath']
+
+        if 'log' in tml and 'op_time_path' in tml['log']:
+            conf.optime_logfilepath = tml['log']['op_time_path']
+            optime_logger = OptimeLogger(conf.optime_logfilepath)
+            if optime_logger.read():
+                conf.start_optime = optime_logger.read()
 
         return conf

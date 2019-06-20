@@ -12,7 +12,7 @@ class Logger(object):
         """
         logger = logging.getLogger('py-mongo-sync')
         logger.setLevel(logging.INFO)
-        formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+        formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] [%(process)s] " "[%(module)s:%(lineno)d] >> " "%(message)s")
         if filepath:
             handler_log = logging.handlers.RotatingFileHandler(filepath, mode='a', maxBytes=1024*1024*100, backupCount=3)
             handler_log.setFormatter(formatter)

@@ -1,7 +1,6 @@
 import sys
 import time
 import datetime
-import exceptions
 import gevent
 from mongosync.config import Config
 from mongosync.logger import Logger
@@ -78,7 +77,7 @@ class CommonSyncer(object):
         # clear data manually if necessary
         try:
             self._sync()
-        except exceptions.KeyboardInterrupt:
+        except KeyboardInterrupt:
             log.info('keyboard interrupt')
 
     def _sync(self):
@@ -86,7 +85,13 @@ class CommonSyncer(object):
         """
         if self._conf.start_optime:
             log.info("locating oplog, it will take a while")
-            doc = self._src.client()['local']['oplog.rs'].find_one({'ts': {'$gte': self._conf.start_optime}})
+            doc = None
+            cur = self._src.client()['local']['oplog.rs'].find(
+                {'ts': {'$lte': self._conf.start_optime}}, {"ts": 1}).sort("$natural", -1).limit(1)
+            try:
+                doc = cur.next()
+            except StopIteration:
+                pass
             if not doc:
                 log.error('oplog is stale')
                 return
@@ -151,7 +156,7 @@ class CommonSyncer(object):
             return []
 
         n_points = n_partitions - 1
-        max_chunk_size = ((collstats['count'] / (n_partitions - 1) - 1) * 2 * collstats['avgObjSize']) / 1024 / 1024
+        max_chunk_size = int(((collstats['count'] / (n_partitions - 1) - 1) * 2 * collstats['avgObjSize']) / 1024 / 1024)
 
         if max_chunk_size <= 0:
             return []

@@ -2,6 +2,7 @@ import sys
 import time
 import pymongo
 import bson
+
 from mongosync import mongo_utils
 from mongosync.config import MongoConfig
 from mongosync.logger import Logger
@@ -23,7 +24,7 @@ class MongoHandler(object):
         """ Connect to server.
         """
         try:
-            if isinstance(self._conf.hosts, unicode):
+            if isinstance(self._conf.hosts):
                 host, port = mongo_utils.parse_hostportstr(self._conf.hosts)
                 self._mc = mongo_utils.connect(host, port,
                                                authdb=self._conf.authdb,

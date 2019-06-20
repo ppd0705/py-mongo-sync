@@ -37,4 +37,5 @@ nosetests.xml
 
 #
 *.pyc
+.idea
 tags

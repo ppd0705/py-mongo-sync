@@ -1,7 +1,7 @@
 import pymongo
 import gevent
 import mmh3
-import mongo_utils
+from mongosync import mongo_utils
 from mongosync.mongo.syncer import MongoHandler
 from mongosync.logger import Logger
 
@@ -56,9 +56,9 @@ class MultiOplogReplayer(object):
         """ Apply oplogs.
         """
         oplog_vecs = []
-        for ns, oplogs in self._map.iteritems():
+        for ns, oplogs in self._map.items():
             dbname, collname = mongo_utils.parse_namespace(ns)
-            n = len(oplogs) / self._batch_size + 1
+            n = len(oplogs) // self._batch_size + 1
             if n == 1:
                 vec = OplogVector(dbname, collname)
                 for oplog in oplogs:
@@ -67,7 +67,7 @@ class MultiOplogReplayer(object):
                     vec._oplogs.append(op)
                 oplog_vecs.append(vec)
             else:
-                vecs = [OplogVector(dbname, collname) for i in xrange(n)]
+                vecs = [OplogVector(dbname, collname) for i in range(n)]
                 for oplog in oplogs:
                     op = self.__convert(oplog)
                     assert op is not None

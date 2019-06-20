@@ -2,9 +2,9 @@ import sys
 import time
 import multiprocessing
 import threading
-import Queue
-from mongosync.logger import Logger
+import queue
 
+from mongosync.logger import Logger
 log = Logger.get()
 
 
@@ -33,7 +33,7 @@ class LoggerThread(threading.Thread):
     """
     def __init__(self, n_colls, **kwargs):
         self._n_colls = n_colls
-        self._q = Queue.Queue()
+        self._q = queue.Queue()
         self._ns_map = {}
         super(LoggerThread, self).__init__(**kwargs)
 

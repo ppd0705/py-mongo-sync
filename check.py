@@ -11,32 +11,32 @@ def get_standard_index_name(index_items):
     """
     index_keys = []
     for key, direction in index_items['key']:
-        if isinstance(direction, int) or isinstance(direction, long) or isinstance(direction, float):
+        if isinstance(direction, int) or isinstance(direction, float):
             index_keys.append('%s_%d' % (key, int(direction)))
-        elif isinstance(direction, str) or isinstance(direction, unicode):
+        elif isinstance(direction, str):
             index_keys.append('%s_%s' % (key, direction))
         else:
-            print 'invalid direction for', index_items['key']
+            print('invalid direction for', index_items['key'])
             sys.exit(1)
     return '_'.join(index_keys)
 
 if __name__ == '__main__':
     conf = CheckCommandOptions.parse()
 
-    print '=' * 48
-    print 'src           :  %s' % conf.src_hostportstr
-    print 'src authdb    :  %s' % conf.src_authdb
-    print 'src username  :  %s' % conf.src_username
-    print 'src password  :  %s' % conf.src_password
-    print 'dst           :  %s' % conf.dst_hostportstr
-    print 'dst authdb    :  %s' % conf.dst_authdb
-    print 'dst username  :  %s' % conf.dst_username
-    print 'dst password  :  %s' % conf.dst_password
-    print '-' * 48
-    print 'dbs           :  %s' % conf.dbs
-    print 'src db        :  %s' % conf.src_db
-    print 'dst db        :  %s' % conf.dst_db
-    print '=' * 48
+    print('=' * 48)
+    print('src           :  %s' % conf.src_hostportstr)
+    print('src authdb    :  %s' % conf.src_authdb)
+    print('src username  :  %s' % conf.src_username)
+    print('src password  :  %s' % conf.src_password)
+    print('dst           :  %s' % conf.dst_hostportstr)
+    print('dst authdb    :  %s' % conf.dst_authdb)
+    print('dst username  :  %s' % conf.dst_username)
+    print('dst password  :  %s' % conf.dst_password)
+    print('-' * 48)
+    print('dbs           :  %s' % conf.dbs)
+    print('src db        :  %s' % conf.src_db)
+    print('dst db        :  %s' % conf.dst_db)
+    print('=' * 48)
 
     rename_db_mode = False
     if conf.src_db and conf.dst_db:
@@ -76,9 +76,9 @@ if __name__ == '__main__':
 
     # validate data
     data_pass = True
-    print '-' * 96
-    print '%s%s%s%s' % ('RESULT'.ljust(16), 'COLL'.ljust(48), 'SRC'.rjust(16), 'DST'.rjust(16))
-    print '-' * 96
+    print('-' * 96)
+    print('%s%s%s%s' % ('RESULT'.ljust(16), 'COLL'.ljust(48), 'SRC'.rjust(16), 'DST'.rjust(16)))
+    print('-' * 96)
     for dbname in sorted(src_mc.database_names()):
         if dbname in ignore_dbs:
             continue
@@ -99,14 +99,14 @@ if __name__ == '__main__':
             else:
                 res = 'ERR'
                 data_pass = False
-            print '%s%s%s%s' % (res.ljust(16), (dbname + '.' + collname).ljust(48), str(src_coll_cnt).rjust(16), str(dst_coll_cnt).rjust(16))
-    print '-' * 96
+            print('%s%s%s%s' % (res.ljust(16), (dbname + '.' + collname).ljust(48), str(src_coll_cnt).rjust(16), str(dst_coll_cnt).rjust(16)))
+    print('-' * 96)
 
     # validate index
     index_pass = True
-    print '-' * 128
-    print '%s%s%s' % ('RESULT'.ljust(16), 'COLL'.ljust(48), 'INDEX'.rjust(64))
-    print '-' * 128
+    print('-' * 128)
+    print('%s%s%s' % ('RESULT'.ljust(16), 'COLL'.ljust(48), 'INDEX'.rjust(64)))
+    print('-' * 128)
     for dbname in sorted(src_mc.database_names()):
         if dbname in ignore_dbs:
             continue
@@ -136,15 +136,15 @@ if __name__ == '__main__':
                 else:
                     res = 'ERR'
                     index_pass = False
-                print '%s%s%s' % (res.ljust(16), (dbname + '.' + collname).ljust(48), index_name.rjust(64))
-    print '-' * 128
+                print('%s%s%s' % (res.ljust(16), (dbname + '.' + collname).ljust(48), index_name.rjust(64)))
+    print('-' * 128)
 
     if data_pass:
-        print 'data: SUCCESS'
+        print('data: SUCCESS')
     else:
-        print 'data: FAILED'
+        print('data: FAILED')
 
     if index_pass:
-        print 'index: SUCCESS'
+        print('index: SUCCESS')
     else:
-        print 'data: FAILED'
+        print('data: FAILED')

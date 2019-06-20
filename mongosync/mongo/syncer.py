@@ -1,3 +1,4 @@
+import sys
 import time
 import multiprocessing
 import gevent
@@ -38,7 +39,7 @@ class MongoSyncer(CommonSyncer):
             """
             res = []
             for key, direction in key_direction_list:
-                if isinstance(direction, float) or isinstance(direction, long):
+                if isinstance(direction, float):
                     direction = int(direction)
                 res.append((key, direction))
             return res
@@ -46,7 +47,7 @@ class MongoSyncer(CommonSyncer):
         dbname, collname = namespace_tuple
         dst_dbname, dst_collname = self._conf.db_coll_mapping(dbname, collname)
         index_info = self._src.client()[dbname][collname].index_information()
-        for name, info in index_info.iteritems():
+        for name, info in index_info.items():
             keys = info['key']
             options = {}
             options['name'] = name
@@ -107,7 +108,7 @@ class MongoSyncer(CommonSyncer):
                         groups.append(reqs)
                         reqs = []
                     if len(groups) == groups_max:
-                        threads = [gevent.spawn(self.bulk_write, self._dst.client(), dst_dbname, dst_collname, groups[i]) for i in xrange(groups_max)]
+                        threads = [gevent.spawn(self.bulk_write, self._dst.client(), dst_dbname, dst_collname, groups[i]) for i in range(groups_max)]
                         gevent.joinall(threads)
                         groups = []
 
@@ -117,7 +118,7 @@ class MongoSyncer(CommonSyncer):
                         n = 0
 
                 if len(groups) > 0:
-                    threads = [gevent.spawn(self.bulk_write, self._dst.client(), dst_dbname, dst_collname, groups[i]) for i in xrange(len(groups))]
+                    threads = [gevent.spawn(self.bulk_write, self._dst.client(), dst_dbname, dst_collname, groups[i]) for i in range(len(groups))]
                     gevent.joinall(threads)
                 if len(reqs) > 0:
                     self.bulk_write(self._dst.client(), dst_dbname, dst_collname, reqs)
@@ -208,7 +209,7 @@ class MongoSyncer(CommonSyncer):
                         groups.append(reqs)
                         reqs = []
                     if len(groups) == groups_max:
-                        threads = [gevent.spawn(self.bulk_write, self._dst.client(), dst_dbname, dst_collname, groups[i]) for i in xrange(groups_max)]
+                        threads = [gevent.spawn(self.bulk_write, self._dst.client(), dst_dbname, dst_collname, groups[i]) for i in range(groups_max)]
                         gevent.joinall(threads)
                         groups = []
 
@@ -219,10 +220,10 @@ class MongoSyncer(CommonSyncer):
                         n = 0
 
                 if len(groups) > 0:
-                    threads = [gevent.spawn(self.bulk_write, self._dst.client(), dst_dbname, dst_collname, groups[i]) for i in xrange(len(groups))]
+                    threads = [gevent.spawn(self.bulk_write, self._dst.client(), dst_dbname, dst_collname, groups[i]) for i in range(len(groups))]
                     gevent.joinall(threads)
                 if len(reqs) > 0:
-                    self.bulk_write(dst_dbname, self._dst.client(), dst_collname, reqs)
+                    self.bulk_write(self._dst.client(), dst_dbname, dst_collname, reqs)
 
                 if n > 0:
                     prog_q.put(n)
@@ -360,7 +361,7 @@ class MongoSyncer(CommonSyncer):
                 log.error('%s' % e)
                 self.reconnect()
             except Exception as e:
-                log.error('bulk write failed: %s' % e)
+                log.exception('bulk write failed: %s.%s. %s' % (type(dbname), collname, e))
                 # retry to write one by one
                 for req in reqs:
                     try:

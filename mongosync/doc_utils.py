@@ -74,4 +74,4 @@ if __name__ == '__main__':
     assert gen_doc_with_fields(doc, ['a.b.c']) == doc1
     assert gen_doc_with_fields(doc, ['a.b.d']) == doc2
 
-    print 'test cases all pass'
+    print('test cases all pass')
