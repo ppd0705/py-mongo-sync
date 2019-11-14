@@ -34,3 +34,4 @@ dbs =  [
 # log config
 [log]
 filepath = "sync.log" # write to stdout if empty or not set
+op_time_path = "op_time.log" # save oplog time
