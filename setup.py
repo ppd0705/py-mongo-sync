@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
 
-version = "0.0.1"
+version = "0.0.2"
 
 
 def read_file(file):

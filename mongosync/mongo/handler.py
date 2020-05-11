@@ -156,6 +156,18 @@ class MongoHandler(object):
                     # FIX ISSUE #4 and #5
                     # if use option '--colls' to sync target collections,
                     # commands running on other collections in the same database may replay failed
+
+                    if "renameCollection" in oplog['o']:
+                        # rename collection
+                        src = oplog['o']['renameCollection']
+                        to = oplog['o']['to']
+                        drop_target = oplog['o'].get('dropTarget', False)
+                        try:
+                            self._mc["admin"].command("renameCollection", src, to=to, dropTarget=drop_target)
+                        except pymongo.errors.OperationFailure as e:
+                            log.error('renameCollection %s: %s' % (e, oplog))
+                        return
+
                     try:
                         self._mc[dbname].command(oplog['o'])
                     except pymongo.errors.OperationFailure as e:
