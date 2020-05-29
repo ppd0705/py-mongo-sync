@@ -58,24 +58,12 @@ class MultiOplogReplayer(object):
         oplog_vecs = []
         for ns, oplogs in self._map.items():
             dbname, collname = mongo_utils.parse_namespace(ns)
-            n = len(oplogs) // self._batch_size + 1
-            if n == 1:
-                vec = OplogVector(dbname, collname)
-                for oplog in oplogs:
-                    op = self.__convert(oplog)
-                    assert op is not None
-                    vec._oplogs.append(op)
-                oplog_vecs.append(vec)
-            else:
-                vecs = [OplogVector(dbname, collname) for i in range(n)]
-                for oplog in oplogs:
-                    op = self.__convert(oplog)
-                    assert op is not None
-                    # filter of UpdateOne/ReplaceOne/DeleteOne is {'_id': ObjectID}
-                    # @ref https://github.com/mongodb/mongo-python-driver/blob/master/pymongo/operations.py
-                    m = self.__hash(op._filter['_id'])
-                    vecs[m % n]._oplogs.append(op)
-                oplog_vecs.extend(vecs)
+            vec = OplogVector(dbname, collname)
+            for oplog in oplogs:
+                op = self.__convert(oplog)
+                assert op is not None
+                vec._oplogs.append(op)
+            oplog_vecs.append(vec)
 
         for vec in oplog_vecs:
             if vec._oplogs:
